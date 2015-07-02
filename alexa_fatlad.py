@@ -12,7 +12,6 @@ logging.basicConfig(filename='cherry.log',level=logging.DEBUG)
 def JoshTomar():
 	phrases = ["Joshua Tomar", "Joshua Tomar, of course.", "That guys who lives in this house.  I think his name is Joshua Tomar.", "Obviously my main man, Joshua Tomar", "That one's easy.  Joshua Tomar"]
 	phrase = random.choice(phrases)
-	print(phrase)
 	return phrase	
 	  
 class AlexaModel(object):
@@ -28,6 +27,7 @@ class AlexaModel(object):
 		try:
 			#This takes advantage of the json_in decorator to convert the whole request body to dictionary
 			body = cherrypy.request.json
+			#We are logging the body of the json request because we needed to see what Amazon was actually sending.  It's surprising how there were no examples of a standard session in terms of JSON in the Alexa Skills Kit.
 			logging.debug("JSON REQUEST:")
 			logging.debug(body)
 			#This next line should be all you need to grab the intent stated by Alexa

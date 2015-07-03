@@ -5,15 +5,36 @@ import random
 import json
 import sys
 import logging
+import jinja2
+from jinja2 import Environment, FileSystemLoader
 
-logging.basicConfig(filename='cherry.log',level=logging.DEBUG)
+logging.basicConfig(filename='cherry.log',level=logging.WARNING)
 
-#This is just a strupid function wrote to return a random phrase to answer the any of the questions associated with the intent "GetTheMan"
+#Define app version
+version = ".01"
+
 def JoshTomar():
+	#This is just a strupid function wrote to return a random phrase to answer the any of the questions associated with the intent "GetTheMan"
 	phrases = ["Joshua Tomar", "Joshua Tomar, of course.", "That guys who lives in this house.  I think his name is Joshua Tomar.", "Obviously my main man, Joshua Tomar", "That one's easy.  Joshua Tomar"]
 	phrase = random.choice(phrases)
-	return phrase	
-	  
+	return phrase
+
+def WriteResponse(speech):
+	#This function uses the jinja2 template engine to generate the Reponse JSON object, the only input it currently takes is a speech string containing the plaintext response for Alexa to speak.
+	env = Environment(loader=FileSystemLoader('templates'))
+	env.filters['jsonify'] = json.dumps
+	template = env.get_template('IntentResponse.json')
+	response = {
+		'version': version,
+		'speech': speech,
+		'end': True
+	}
+	render = template.render(response=response)
+	logging.debug("RENDER:")
+	logging.debug(render)
+	#We need to do a final json.loads because cherrypy's decorators are already going to apply json.dumps to our output, which we don't want happening twice or we get ugly unusable output.
+	return json.loads(render);
+
 class AlexaModel(object):
 	def index(self):
 		return "Web Service is Up"
@@ -31,16 +52,23 @@ class AlexaModel(object):
 			logging.debug("JSON REQUEST:")
 			logging.debug(body)
 			#This next line should be all you need to grab the intent stated by Alexa
-			intent = body["request"]["intent"]["name"]
-			if intent == u'GetTheMan':
-				message = JoshTomar()
-				output =  {"outputSpeech": message , }
+			if body["request"]["type"] == u'IntentRequest':
+				intent = body["request"]["intent"]["name"]
+				if intent == u'GetTheMan':
+					message = JoshTomar()
+					output =  WriteResponse(message)
+					return output
+				else:
+					message = "This is an unrecognized intent. Fix it."
+					output = WriteResponse(message)
+					return output
 			else:
-				message = "This is an unrecognized intent. Fix it."
-				output = {"outputSpeech": message }
-			return output
+				output = WriteResponse("We're done here.")
+				return output
 		except:
-			return {"outputSpeech": "An Unhandled Exception occured.  Go fix it, numb nuts." }
+			message = "An Unhandled Exception occured.  Go fix it, numb nuts."
+			output = WriteResponse(message)
+			return output
 			raise
 
 

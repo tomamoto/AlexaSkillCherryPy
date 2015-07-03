@@ -1,0 +1,10 @@
+{
+  "version": "{{ response.version }}",
+  "response": {
+    "outputSpeech": {
+      "type": "PlainText",
+      "text": "{{ response.speech }}"
+    },
+    "shouldEndSession": {{ response.end|jsonify }}
+  }
+}

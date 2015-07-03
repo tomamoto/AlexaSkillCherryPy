@@ -15,7 +15,7 @@ version = ".01"
 
 def JoshTomar():
 	#This is just a strupid function wrote to return a random phrase to answer the any of the questions associated with the intent "GetTheMan"
-	phrases = ["Joshua Tomar", "Joshua Tomar, of course.", "That guys who lives in this house.  I think his name is Joshua Tomar.", "Obviously my main man, Joshua Tomar", "That one's easy.  Joshua Tomar"]
+	phrases = ["Joshua Tomar", "Joshua Tomar, of course.", "That guy who lives in this house.  I think his name is Joshua Tomar.", "Obviously my main man, Joshua Tomar", "That one's easy.  Joshua Tomar"]
 	phrase = random.choice(phrases)
 	return phrase
 

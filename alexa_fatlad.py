@@ -5,8 +5,6 @@ import random
 import json
 import sys
 import logging
-import jinja2
-from jinja2 import Environment, FileSystemLoader
 
 logging.basicConfig(filename='cherry.log',level=logging.WARNING)
 
@@ -20,20 +18,19 @@ def JoshTomar():
 	return phrase
 
 def WriteResponse(speech):
-	#This function uses the jinja2 template engine to generate the Reponse JSON object, the only input it currently takes is a speech string containing the plaintext response for Alexa to speak.
-	env = Environment(loader=FileSystemLoader('templates'))
-	env.filters['jsonify'] = json.dumps
-	template = env.get_template('IntentResponse.json')
-	response = {
-		'version': version,
-		'speech': speech,
-		'end': True
-	}
-	render = template.render(response=response)
-	logging.debug("RENDER:")
-	logging.debug(render)
+	#This function creates an object contains a valid Alexa response, which we will then return as a JSON string
+
+	response = 	{ 'version': version,
+			'response': {
+				'outputSpeech': {
+					'type': 'PlainText',
+					'text': speech },
+				'shouldEndSession': True }
+			}
+			
+
 	#We need to do a final json.loads because cherrypy's decorators are already going to apply json.dumps to our output, which we don't want happening twice or we get ugly unusable output.
-	return json.loads(render);
+	return json.dumps(response)
 
 class AlexaModel(object):
 	def index(self):
@@ -43,7 +40,7 @@ class AlexaModel(object):
 	#Here is where the actual Alexa stuff is defined.  Note the three decorators below.  I have SSL set up on nginx and a pass_proxy argument for http://127.0.0.1:9090/alexa to match the default config in server.conf
 	@cherrypy.expose
 	@cherrypy.tools.json_in()
-	@cherrypy.tools.json_out()
+	#@cherrypy.tools.json_out()
 	def alexa(self):
 		try:
 			#This takes advantage of the json_in decorator to convert the whole request body to dictionary

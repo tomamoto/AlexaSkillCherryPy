@@ -40,7 +40,7 @@ class AlexaModel(object):
 	#Here is where the actual Alexa stuff is defined.  Note the three decorators below.  I have SSL set up on nginx and a pass_proxy argument for http://127.0.0.1:9090/alexa to match the default config in server.conf
 	@cherrypy.expose
 	@cherrypy.tools.json_in()
-	#@cherrypy.tools.json_out()
+	@cherrypy.tools.json_out()
 	def alexa(self):
 		try:
 			#This takes advantage of the json_in decorator to convert the whole request body to dictionary

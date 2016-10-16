@@ -2,7 +2,6 @@
 
 import cherrypy
 import random
-import json
 import sys
 import logging
 import config

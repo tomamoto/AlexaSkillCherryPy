@@ -1,0 +1,2 @@
+#The following should contain your own personal APP ID from when you create your skill in the alexa developer portal
+app_id = 'amzn1.echo-sdk-ams.app.xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx'

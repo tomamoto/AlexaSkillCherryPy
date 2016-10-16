@@ -5,6 +5,7 @@ import random
 import json
 import sys
 import logging
+import config
 
 logging.basicConfig(filename='cherry.log',level=logging.WARNING)
 
@@ -49,6 +50,10 @@ class AlexaModel(object):
 			logging.debug("JSON REQUEST:")
 			logging.debug(body)
 			#This next line should be all you need to grab the intent stated by Alexa
+			if body["session"]["application"]["applicationId"] != config.app_id:
+				print(body["session"]["application"]["applicationId"])
+				logging.critical("This is not a valid request.  We do not trust the source because they didn't supply a valid App ID")
+				return WriteResponse("You stole fizzy lifting drink! Good day, sir.")
 			if body["request"]["type"] == u'IntentRequest':
 				intent = body["request"]["intent"]["name"]
 				if intent == u'GetTheMan':
@@ -63,7 +68,7 @@ class AlexaModel(object):
 				output = WriteResponse("We're done here.")
 				return output
 		except:
-			message = "An Unhandled Exception occured.  Go fix it, numb nuts."
+			message = "An Unhandled Exception occured.  Sorry."
 			output = WriteResponse(message)
 			return output
 			raise

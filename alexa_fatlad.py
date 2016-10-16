@@ -30,7 +30,7 @@ def WriteResponse(speech):
 			
 
 	#We need to do a final json.loads because cherrypy's decorators are already going to apply json.dumps to our output, which we don't want happening twice or we get ugly unusable output.
-	return json.dumps(response)
+	return response
 
 class AlexaModel(object):
 	def index(self):
